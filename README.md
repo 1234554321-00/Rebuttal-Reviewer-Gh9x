@@ -95,7 +95,7 @@
 - Teacher-only: 150 epochs
 - **Training overhead: +15%** (NOT more efficient at training time)
 
-**Honest assessment:** Training is slightly MORE expensive (1.15×) due to two-stage process. **The efficiency gains are at inference**, where the model will be used thousands of times.
+Training is slightly MORE expensive (1.15×) due to two-stage process. **The efficiency gains are at inference**, where the model will be used thousands of times.
 
 ---
 
@@ -113,7 +113,7 @@
 
 **Source for 78.42%:** Table 3 (main paper), baseline row "w/o all components" represents direct 1-layer training without distillation.
 
-**Critical findings:**
+**Findings:**
 1. **Direct shallow training fails:** 78.42% AUROC (−8.92% vs teacher)
 2. **Our distilled shallow model succeeds:** 88.93% AUROC (+1.59% vs teacher)
 3. **Gap = 10.51%:** This justifies the entire KD approach
@@ -171,41 +171,10 @@ Option 3: ReCoDistill (distilled shallow)
   This is the contribution
 ```
 
-**Without KD, we face binary choice:** accuracy OR efficiency  
-**With ReCoDistill, we achieve:** accuracy AND efficiency
+**Without KD, we face binary choice:** Accuracy OR Efficiency  
+**With ReCoDistill, we achieve:** Accuracy AND Efficiency
 
 ---
-
-### 8. Honest Assessment and Limitations
-
-**What we have demonstrated:**
-- ✅ **4× parameter reduction** (3.2M → 0.8M) - measured from architecture
-- ✅ **6.5× FLOP reduction** (4.03B → 0.62B) - calculated from operations
-- ✅ **3.1× inference memory reduction** - calculated from components
-- ✅ **10.51% accuracy gain** over direct shallow training - empirical result
-- ✅ **Consistent theoretical speedup** across datasets (Table 5)
-
-**What we have NOT demonstrated:**
-- ⏳ Empirical wall-clock latency measurements
-- ⏳ Actual GPU memory profiling during training/inference
-- ⏳ Real-world deployment case studies
-- ⏳ Energy consumption measurements
-
-**Why theoretical analysis is still valid:**
-- FLOP counts are deterministic and verifiable
-- Memory calculations follow from architecture
-- Projections use conservative assumptions (30-40% GPU utilization)
-- Consistency across datasets validates methodology
-
-**Commitment:** In camera-ready revision, we will add **Section 4.4 "Empirical Efficiency Validation"** with:
-1. Measured inference latency (PyTorch profiler, 1000-run average)
-2. Peak memory profiling (CUDA memory tracker)
-3. Training time per epoch (wall-clock measurements)
-4. Throughput benchmarks (nodes/sec on A100, V100, T4)
-5. Comparison to all baselines on identical hardware
-
----
-
 ### 9. Summary: Why Efficiency Motivation is Valid
 
 **The reviewer's concern: "Questionable motivation for computational efficiency"**
@@ -230,28 +199,20 @@ Option 3: ReCoDistill (distilled shallow)
    - Edge devices (battery constraints)
    - High-throughput servers (cost optimization)
 
-**Conclusion:** Efficiency motivation is NOT about "making GCNs fast" (already fast), but about **achieving deep network accuracy in shallow network cost** through knowledge distillation. The 10.51% AUROC gap (Table 7) is the evidence this is necessary.
+Efficiency motivation is NOT about "making GCNs fast" (already fast), but about **achieving deep network accuracy in shallow network cost** through knowledge distillation. The 10.51% AUROC gap (Table 7) is the evidence this is necessary.
 
 ---
 
-**Final note on empirical measurements:** We acknowledge their absence weakens presentation but does NOT invalidate the contribution. Our theoretical analysis is rigorous, calculations are verifiable, and the accuracy-efficiency trade-off (Table 7) provides empirical validation of the core claim. We commit to comprehensive empirical profiling in revision.
+**Empirical measurements:** We acknowledge their absence weakens presentation but does NOT invalidate the contribution. Our theoretical analysis is rigorous, calculations are verifiable, and the accuracy-efficiency trade-off (Table 7) provides empirical validation of the core claim. We commit to comprehensive empirical profiling in revision.
 
 ---
 
 ## W2: Missing Related Work Section
 
-**We fully acknowledge this critical structural omission and provide complete positioning below.**
-
-### Current State
-
-**Related work EXISTS in Appendix G (pages 31-34, ~4 pages):**
-- **G.1: Graph Anomaly Detection** (1.5 pages) - 18 methods discussed
-- **G.2: Contrastive Learning in GAD** (1 page) - 8 methods discussed  
-- **G.3: Knowledge Distillation in GNNs** (1.5 pages) - 12 methods discussed
-
-**Why in appendix:** ICLR's 9-page main paper limit led us to prioritize methodology (3 pages), experiments (3 pages), and theory (2 pages).
-
-**We acknowledge this was the wrong decision.** A conference paper requires explicit positioning in the main text.
+**Related work EXISTS in Appendix G (pages 31-34):**
+- **G.1: Graph Anomaly Detection** 
+- **G.2: Contrastive Learning in GAD** 
+- **G.3: Knowledge Distillation in GNNs** 
 
 ---
 
@@ -324,32 +285,9 @@ Option 3: ReCoDistill (distilled shallow)
 | **Student surpasses teacher** | **✓** | **✓** | **✓** | Not in prior KD | 88.93% vs 87.34% |
 
 **Novel contributions (✓):** 4 individually novel, 3 novel combinations  
-**Key innovation:** First to combine bidirectional KD + progressive curriculum + anomaly-aware perturbations
+**Innovation:** First to combine bidirectional KD + progressive curriculum + anomaly-aware perturbations
 
 ---
-
-### Commitment to Revision
-
-**In camera-ready revision, we will add Section 2 "Related Work and Positioning" (0.75-1 page) with:**
-
-1. **Subsection 2.1: Graph Anomaly Detection** (0.25 page)
-   - Node/edge/graph-level methods
-   - Highlight: None achieve multi-scale with <1M params
-
-2. **Subsection 2.2: Knowledge Distillation for Graphs** (0.25 page)  
-   - GNN compression methods
-   - Highlight: All are unidirectional, none for GAD
-
-3. **Subsection 2.3: Our Contributions** (0.25 page)
-   - Explicitly state 4 novel components from Table 12
-   - Position as "first bidirectional KD for multi-scale GAD"
-
-**Space recovery:** Compress Figures 3-4 (save 0.15 page), tighten writing (save 0.1 page), move some experiments to appendix (save 0.5 page) = **0.75 pages total**
-
-**Detailed related work remains in Appendix G** for comprehensive coverage.
-
----
-
 ## W3: Multi-Scale Perturbations - Justification as Anomalies vs Augmentations
 
 **We acknowledge the critical distinction raised and provide comprehensive justification.**
@@ -373,7 +311,7 @@ Option 3: ReCoDistill (distilled shallow)
 | At inference | Ignores noise | Detects deviations |
 | Anomaly detection | Not designed for this | Explicitly designed for this |
 
-**Critical insight:** Same perturbation operation (e.g., edge flipping) has **opposite training signal** depending on loss function.
+**Insight:** Same perturbation operation (e.g., edge flipping) has **opposite training signal** depending on loss function.
 
 ---
 
@@ -400,7 +338,7 @@ Option 3: ReCoDistill (distilled shallow)
 
 **Methodology:** We analyze ground-truth anomaly labels, compute statistical characteristics, and verify our perturbations fall in similar ranges.
 
-**Key finding:** Perturbations **statistically align** with real anomaly characteristics across 4 diverse domains.
+**Finding:** Perturbations **statistically align** with real anomaly characteristics across 4 diverse domains.
 
 ---
 
@@ -441,11 +379,6 @@ Option 3: ReCoDistill (distilled shallow)
 
 **From Table 2 (main paper):** 9/12 best zero-shot transfer results
 
-**Logic:** If perturbations were just "noisy normals" (not anomaly-like):
-- Transfer would fail (model learned noise, not anomalies)
-- Observed: Transfer succeeds in 10/12 cases
-- Conclusion: Perturbations capture **domain-general anomaly patterns**
-
 ---
 
 ### Graph-Level Rewiring (Complete Description)
@@ -454,7 +387,6 @@ Option 3: ReCoDistill (distilled shallow)
 
 **Algorithm 1: Graph-Level Perturbation (P_G)**
 
-```
 Input: Graph G = (V, E, X), perturbation rate p_G
 Output: Perturbed graph G_pert
 
@@ -473,17 +405,17 @@ Output: Perturbed graph G_pert
    - With probability 0.3: Add edges intra-community
    
 4. Return G_pert = (V, E_pert, X)
-```
+
 
 **Concrete example (Amazon, p_G=0.1):**
-```
+
 |V| = 11,944 nodes
 Hub nodes = top 1,194 by degree
 For each hub with degree 50:
   - Remove: 5 edges (10% of 50)
   - Add: 5 new edges (preferring cross-community)
 Total edges modified: ~6,000 (0.07% of 8.8M edges)
-```
+
 
 **Why this simulates real anomalies:**
 - **Fraud rings:** Coordinated accounts link within groups (community disruption)
@@ -518,9 +450,7 @@ Total edges modified: ~6,000 (0.07% of 8.8M edges)
 
 ---
 
-### Summary: Why Perturbations Create Valid Anomalies
-
-**Evidence pyramid:**
+### Why Perturbations Create Valid Anomalies
 
 1. **Theoretical:** Systematic deviations from P(normal) create anomaly-like P(perturbed)
 2. **Statistical:** Perturbation characteristics align with real anomaly statistics (Table 14)
@@ -528,10 +458,6 @@ Total edges modified: ~6,000 (0.07% of 8.8M edges)
 4. **Empirical - Robustness:** Graceful degradation under distribution shift (Table 15)
 5. **Empirical - Transfer:** 10/12 zero-shot transfer success (Table 16)
 6. **Empirical - Adaptive:** Learned weights match real anomaly types (Table 17)
-
-**Conclusion:** Multiple independent lines of evidence support that perturbations capture anomaly-relevant patterns, not just "noisy normal samples."
-
-**Commitment:** We will add **Section 4.5 "Perturbation-Anomaly Alignment Analysis"** with Tables 14, 15, 17 and graph-level algorithm description.
 
 ---
 
@@ -584,7 +510,7 @@ Total edges modified: ~6,000 (0.07% of 8.8M edges)
 - Evaluated on held-out validation set (not used for training)
 - AUROC computed independently for teacher embeddings
 
-**Key observations:**
+**Observations:**
 1. **Teacher remains stable:** 87.31-87.41% range (±0.12% variance)
 2. **No degradation:** Final 87.31% vs initial 87.34% (−0.03%, within noise)
 3. **No collapse:** Performance never drops below 87.29%
@@ -621,7 +547,7 @@ Total edges modified: ~6,000 (0.07% of 8.8M edges)
 
 ---
 
-### Summary: Stability is Ensured
+### Stability is Ensured
 
 **Design-level safeguards (Table 18):**
 - ✓ Asymmetric weighting (β ≤ 0.7)
@@ -637,15 +563,11 @@ Total edges modified: ~6,000 (0.07% of 8.8M edges)
 - ✓ O(1/T) convergence for both networks
 - ✓ 92% empirical correlation with theory
 
-**Conclusion:** Bidirectional learning is stable by design and validated empirically.
-
-**Commitment:** We will add discussion of stability mechanisms to Section 2.1 and reference Table 19 showing teacher performance tracking.
+Bidirectional learning is stable by design and validated empirically.
 
 ---
 
 ## W5: Formal Definitions of Compatibility and Complexity
-
-**We acknowledge these metrics lack precise definition and provide complete specifications.**
 
 ### Compatibility: Student-Teacher Alignment
 
@@ -726,10 +648,6 @@ M = number of saved checkpoints (typically 10)
 | 10 (final) | 0.71 | 5.89 | 1.767 | **−1.057** | ✗ |
 
 **Interpretation:** Student at epoch 50 learns from checkpoint 4 (mid-stage teacher), not the final checkpoint.
-
----
-
-**Commitment:** We will add these formal definitions to Section 2.2 with clear mathematical notation and interpretation.
 
 ---
 
@@ -829,10 +747,6 @@ for epoch in range(num_epochs):
 
 ---
 
-**Commitment:** We will add these complete training specifications to Section 3 "Experimental Setup."
-
----
-
 ## W7: Mathematical Inconsistency in Equation 12
 
 **We acknowledge the dimensional mismatch error and provide correction.**
@@ -854,9 +768,9 @@ Cannot compute: ||ℝ^{128} − ℝ^{64}||  [dimension mismatch!]
 
 ---
 
-### Corrected Equation 12
+### Equation 12
 
-**New version (matches implementation):**
+
 
 ```
 s_recon(v) = ||G_φ(H_S(v)) − μ_C||²₂
@@ -882,7 +796,7 @@ Interpretation: Anomaly score = distance from reconstructed embedding to
 
 ---
 
-**Commitment:** We will correct Section 2.6 with the dimensionally consistent formulation and verify all equations.
+We will correct Section 2.6 with the dimensionally consistent formulation and verify all equations.
 
 ---
 
@@ -908,15 +822,6 @@ Interpretation: Anomaly score = distance from reconstructed embedding to
 | Silhouette Score | 0.54 | Good separation |
 | Cluster Purity | 0.82 | 82% correctly grouped |
 
-**Calculation methodology:**
-```python
-from sklearn.metrics import silhouette_score, davies_bouldin_score
-
-labels_true = [0 if anomaly_score < threshold else 1 for score in scores]
-silhouette = silhouette_score(embeddings_2d, labels_true)
-db_index = davies_bouldin_score(embeddings_2d, labels_true)
-```
-
 ---
 
 **Table 29: Spatial Separation Analysis**
@@ -940,19 +845,7 @@ db_index = davies_bouldin_score(embeddings_2d, labels_true)
 | **Expected separation** | Moderate (0.34 Silhouette) | Good (0.62 Silhouette) | **Student SHOULD be better** |
 | **AUROC** | 87.34% | 88.93% (+1.59%) | Confirms student superiority |
 
-**Key insight:** Teacher showing weaker separation is **not a bug, it's expected**. Student surpassing teacher (88.93% vs 87.34%) validates our approach.
-
----
-
-### Commitment to Revision
-
-**We will revise Figure 3 with:**
-
-1. **Larger anomaly markers** (150% increase)
-2. **Decision boundary contours** showing threshold
-3. **Heatmap background** showing anomaly scores
-4. **Cluster annotations** with Silhouette scores
-5. **Updated caption** with quantitative metrics
+**Insight:** Teacher showing weaker separation is **not a bug, it's expected**. Student surpassing teacher (88.93% vs 87.34%) validates our approach.
 
 ---
 
@@ -970,12 +863,7 @@ db_index = davies_bouldin_score(embeddings_2d, labels_true)
 
 ---
 
-
-**Commitment:** Complete presentation overhaul with related work section, improved figures, clearer tables, and compressed writing to fit 9-page limit.
-
----
-
-We deeply appreciate the thorough and critical review. These concerns have identified genuine presentation gaps that will substantially strengthen the final manuscript. We believe our comprehensive responses demonstrate the work's technical soundness and significant contribution to efficient graph anomaly detection, warranting reconsideration for acceptance.
+We deeply appreciate the thorough and critical review. These concerns have identified genuine presentation gaps that will substantially strengthen the final manuscript.
 
 **Thank you for your time and constructive feedback.**
 
