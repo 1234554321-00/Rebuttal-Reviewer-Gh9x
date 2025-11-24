@@ -311,7 +311,7 @@ Table 13: Perturbations as Augmentations vs Anomalies
 | At inference | Ignores noise | Detects deviations |
 | Anomaly detection | Not designed for this | Explicitly designed for this |
 
-Insight: Same perturbation operation (e.g., edge flipping) has opposite training signal depending on loss function.
+Same perturbation operation (e.g., edge flipping) has opposite training signal depending on loss function.
 
 ---
 
@@ -381,7 +381,7 @@ From Table 2 (main paper): 9/12 best zero-shot transfer results
 
 ---
 
-### Graph-Level Rewiring (Complete Description)
+### Graph-Level Rewiring 
 
 The reviewer notes this is "mentioned but never fully described."
 
@@ -407,7 +407,7 @@ Output: Perturbed graph G_pert
 4. Return G_pert = (V, E_pert, X)
 
 
-Concrete example (Amazon, p_G=0.1):
+Example (Amazon, p_G=0.1):
 
 |V| = 11,944 nodes
 Hub nodes = top 1,194 by degree
@@ -464,8 +464,6 @@ Validation: Learned weights match real anomaly types in each dataset ( column). 
 ## W4: Bidirectional Learning Stability Concerns
 
 We address the legitimate concern about Equation 5 potentially degrading teacher performance.
-
-### Stability Mechanisms (Design-Level)
 
 Table 18: Stability Safeguards in ReCoDistill
 
@@ -841,7 +839,7 @@ Table 30: Teacher vs Student Embedding Comparison
 | Expected separation | Moderate (0.34 Silhouette) | Good (0.62 Silhouette) | Student SHOULD be better |
 | AUROC | 87.34% | 88.93% (+1.59%) | Confirms student superiority |
 
-Insight: Teacher showing weaker separation is not a bug, it's expected. Student surpassing teacher (88.93% vs 87.34%) validates our approach.
+Teacher showing weaker separation is not a bug, it's expected. Student surpassing teacher (88.93% vs 87.34%) validates our approach.
 
 ---
 
